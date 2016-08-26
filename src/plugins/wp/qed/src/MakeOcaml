@@ -1,0 +1,54 @@
+##########################################################################
+#                                                                        #
+#  This file is part of WP plug-in of Frama-C.                           #
+#                                                                        #
+#  Copyright (C) 2007-2016                                               #
+#    CEA (Commissariat a l'energie atomique et aux energies              #
+#         alternatives)                                                  #
+#                                                                        #
+#  All rights reserved.                                                  #
+#  Contact CEA LIST for licensing.                                       #
+##########################################################################
+
+help:
+	@cat README.txt
+
+depend:
+	$(OCAMLDEP) $(INCLUDES) *.ml *.mli *.mll *.mly > .depend
+
+clean::
+	rm -f *~ *.cm* *.o *.a *.so *.annot
+
+.SUFFIXES: .ml .mli .mll .mly .cmo .cmi .cmx
+
+.ml.cmo:
+	$(OCAMLC) $(OPTML) $(OPTCMO) -c $(INCLUDES) $<
+
+.mli.cmi:
+	$(OCAMLC) $(OPTML) $(OPTCMI) -c $(INCLUDES) $<
+
+.ml.cmx:
+	$(OCAMLOPT) $(OPTML) $(OPTCMX) -c $(INCLUDES) $<
+
+.mll.ml:
+	@rm -f $@
+	$(OCAMLLEX) $<
+	@chmod a-w $@
+
+.mly.ml:
+	$(OCAMLYACC) $<
+
+sinclude .depend
+
+#######################################################
+
+OPTC?=.opt
+OCAMLC?=$(OCAMLROOT)ocamlc$(OPTC)
+OCAMLOPT?=$(OCAMLROOT)ocamlopt$(OPTC)
+OCAMLLEX?=$(OCAMLROOT)ocamllex
+OCAMLYACC?=$(OCAMLROOT)ocamlyacc
+OCAMLDOC?=$(OCAMLROOT)ocamldoc$(OPTC)
+OCAMLDEP?=$(OCAMLROOT)ocamldep
+OCAMLMKLIB?=$(OCAMLROOT)ocamlmklib
+
+#######################################################
